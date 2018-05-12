@@ -124,5 +124,23 @@ class Todoist
     {
         return $this->categorie;
     }
+
+
+    /**
+     * Get Todoist
+     *
+     * @return object
+     */
+    public function getTodoist()
+    {
+        return [
+            'id' => $this->getId(),
+            'value' => $this->getValue(),
+            'isCompleted' => $this->getIsCompleted(),
+            'categorie'=> $this->getCategorie()
+        ];
+    }
+
+
 }
 

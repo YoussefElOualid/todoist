@@ -31,7 +31,26 @@
                 categorie: $("input[name=categorie]").val()
             },
             success: function (e) {
-                //location.reload()
+                if(e)
+                {
+                    e = JSON.parse(e);
+                }
+                $('.list-group').append('<button type="button" data-id="' + e.id + '" data-category="' + e.categorie + '" data-status="' + e.isCompleted + '" class="list-group-item list-group-item-action todoList">\n' +
+                    '                            <div class="p" style="float: left;">' + e.value + '</div>\n' +
+                    '                            <span class="badge btn badge-success save hide badge-pill" style="float: right;">\n' +
+                    '                                save\n' +
+                    '                            </span>\n' +
+                    '                            <span class="badge btn badge-info badge-pill edit action" style="float: right;">\n' +
+                    '                                Edit\n' +
+                    '                            </span>\n' +
+                    '                            <span class="badge btn badge-warning badge-pill remove action" style="float: right;">\n' +
+                    '                                Delete\n' +
+                    '                            </span>\n' +
+                    '                                                            <span class="badge btn badge-success notbtn badge-pill action" style="float: right;">\n' +
+                    '                            \n' +
+                    '                                                               not complete\n' +
+                    '                                                                </span>\n' +
+                    '                        </button>');
             }
         })
 
@@ -61,7 +80,7 @@
             }
         })
 
-        $('.notbtn').on('click', function () {
+        $('body').on('click','.notbtn', function () {
             var that= $(this);
             if(confirm('Are you sure ?!')){
                 $.ajax({
@@ -79,7 +98,7 @@
             }
         })
 
-        $('.edit').on('click', function () {
+        $('body').on('click', '.edit', function () {
             var that= $(this);
             var parent = that.parent();
             var text = that.parent().find('.p').text();
@@ -93,7 +112,7 @@
             parent.append(input);
             parent.find('.save, .action').toggleClass('hide');
         });
-        $('.save').on('click', function () {
+        $('body').on('click', '.save', function () {
             var that= $(this);
             var parent = that.parent();
                 $.ajax({
@@ -111,7 +130,7 @@
                 })
         }).text($('.EditToto').val())
 
-            $('.remove').on('click', function () {
+            $('body').on('click', '.remove',function () {
             var that= $(this);
             if(confirm('Are you sure ?!')){
                 $.ajax({

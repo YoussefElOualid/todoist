@@ -81,6 +81,7 @@ class DefaultController extends Controller
         $entityManager->persist($todoist);
         $entityManager->flush();
 
+        echo json_encode($todoist->getTodoist());
         return new Response();
     }
 }
