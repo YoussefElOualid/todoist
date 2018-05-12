@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Todoists list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Value</th>
+                <th>Iscompleted</th>
+                <th>Categorie</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for todoist in todoists %}
+            <tr>
+                <td><a href="{{ path('todoist_show', { 'id': todoist.id }) }}">{{ todoist.id }}</a></td>
+                <td>{{ todoist.value }}</td>
+                <td>{{ todoist.isCompleted }}</td>
+                <td>{{ todoist.categorie }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('todoist_show', { 'id': todoist.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('todoist_edit', { 'id': todoist.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('todoist_new') }}">Create a new todoist</a>
+        </li>
+    </ul>
+{% endblock %}

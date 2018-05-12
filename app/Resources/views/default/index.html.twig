@@ -1,0 +1,99 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col align-self-start todoist">
+
+                <h2> Todoist </h2>
+                <div class="list-group">
+
+                    <div class="list-group-item list-group-item-action input">
+                        <form>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">
+                                        <select class="custom-select filiter">
+                                            <option>All</option>
+                                            <option>Complete</option>
+                                            <option>Not Complete</option>
+                                        </select>
+
+                                    </span>
+                                </div>
+                                <input type="text" class="form-control addInput" name="value" placeholder="What needs to be done?" aria-label="What needs to be done?" aria-describedby="basic-addon2">
+                                <div class="input-group-append">
+                                    <span class="input-group-text" id="basic-addon2">
+                                        <input list="categorieListe" type="text" required name="categorie" id="categorie">
+
+                                        <datalist id="categorieListe">
+                                            <option value=""></option>
+                                            {% for el in categorie %}
+                                                <option value="{{ el }}">{{ el }}</option>
+                                            {% endfor %}
+                                        </datalist>
+                                        <button>Save</button>
+                                    </span>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    {% for el in data %}
+                        <button type="button" data-id="{{ el.id }}" data-category="{{ el.categorie }}" data-status="{{ el.isCompleted }}" class="list-group-item list-group-item-action todoList">
+                            <div class="p" style="float: left;">{{ el.value }}</div>
+                            <span class="badge btn badge-success save hide badge-pill" style="float: right;">
+                                save
+                            </span>
+                            <span class="badge btn badge-info badge-pill edit action" style="float: right;">
+                                Edit
+                            </span>
+                            <span class="badge btn badge-warning badge-pill remove action" style="float: right;">
+                                Delete
+                            </span>
+                            {% if (el.isCompleted == 0 ) %}
+                                <span class="badge btn badge-success notbtn badge-pill action" style="float: right;">
+                            {% else %}
+                                <span class="badge btn badge-success  badge-pill action" style="float: right;">
+                            {% endif %}
+
+                           {% if (el.isCompleted == 0 ) %}
+                                    not complete
+                                    {% else %}
+                                    complete
+                                {% endif %}
+                            </span>
+                        </button>
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .hide{
+            display: none !important;
+        }
+        *{
+            border-radius: 0!important;
+        }
+        .todoist .input{
+            padding: 0 !important;
+            height: 55px;
+        }
+        .todoist h2{
+            text-align: center;
+        }
+        .todoist{
+            margin: 100px;
+        }
+        .list-group-item:not(.input):hover {
+            z-index: 2;
+            color: #fff!important;
+            background-color: #007bff!important;
+            border-color: #007bff!important;
+        }
+    </style>
+{% endblock %}
