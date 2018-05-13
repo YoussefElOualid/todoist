@@ -29,6 +29,24 @@ class DefaultController extends Controller
     }
 
     /**
+     * @Route("/clear", name="clear")
+     */
+    public function clear(Request $request)
+    {
+        $array = $request->query->get('id');
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $todoist = $entityManager->getRepository(Todoist::class)->findBy(['id' => $array]);
+
+        foreach ($todoist as $t)
+            $entityManager->remove($t);
+
+        $entityManager->flush();
+
+        return new Response();
+    }
+
+    /**
      * @Route("/remove", name="remove")
      */
     public function remove(Request $request)

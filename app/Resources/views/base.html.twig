@@ -6,6 +6,7 @@
     {% block stylesheets %}{% endblock %}
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 <body>
 {% block body %}{% endblock %}
@@ -20,8 +21,12 @@
         integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
         crossorigin="anonymous"></script>
 <script>
-    $(document).submit(function () {
+    function getCount() {
+        var count = $('[data-id]').length
+        $('.count p').text(count + ' elements');
+    }
 
+    $(document).submit(function () {
 
         $.ajax({
             url: '{{path("addTodo")}}',
@@ -35,22 +40,19 @@
                 {
                     e = JSON.parse(e);
                 }
-                $('.list-group').append('<button type="button" data-id="' + e.id + '" data-category="' + e.categorie + '" data-status="' + e.isCompleted + '" class="list-group-item list-group-item-action todoList">\n' +
-                    '                            <div class="p" style="float: left;">' + e.value + '</div>\n' +
-                    '                            <span class="badge btn badge-success save hide badge-pill" style="float: right;">\n' +
-                    '                                save\n' +
-                    '                            </span>\n' +
-                    '                            <span class="badge btn badge-info badge-pill edit action" style="float: right;">\n' +
-                    '                                Edit\n' +
-                    '                            </span>\n' +
-                    '                            <span class="badge btn badge-warning badge-pill remove action" style="float: right;">\n' +
-                    '                                Delete\n' +
-                    '                            </span>\n' +
-                    '                                                            <span class="badge btn badge-success notbtn badge-pill action" style="float: right;">\n' +
-                    '                            \n' +
-                    '                                                               not complete\n' +
-                    '                                                                </span>\n' +
-                    '                        </button>');
+                $('<button type="button" data-id="' + e.id + '" data-category="' + e.categorie + '" data-status="' + e.isCompleted + '" class="list-group-item list-group-item-action todoList">' +
+                    '<span class="btn notbtn  action" style="float: left;padding: 0 10px;height: 0"><i class="material-icons">highlight_off</i></span>'+
+                    '<div class="p" style="float: left;">' + e.value + '</div>'+
+                    '<div class="tool"> ' +
+                    '<span class="save hide btn" style="float: right;padding: 0 1àpx;"><i class="material-icons">save</i></span> ' +
+                    '<span class="btn edit action" style="float: right;padding: 0 10px;"> ' +
+                    '<i class="material-icons">create</i> </span> ' +
+                    '<span class="btn remove action" style="float: right;padding: 0 10px;"> ' +
+                    '<i class="material-icons">clear</i> </span> ' +
+                    '<span class="btn notbtn  action" style="float: right;padding: 0 10px;"> ' +
+                    '<i class="material-icons">highlight_off</i> </span> ' +
+                    '</div></button>').insertAfter($('.todoList').last());
+                getCount();
             }
         })
 
@@ -71,11 +73,11 @@
                 })
             }
         }
-        $('.filiter').on('change', function () {
+        $('.filiter').on('click', function () {
             console.log($(this).val())
-            switch ($(this).val().toLowerCase()){
-                case 'complete' : filiter(".todoList", "1");break;
-                case 'not complete' : filiter(".todoList", "0");break;
+            switch ($(this).attr('data').toLowerCase()){
+                case '1' : filiter(".todoList", "1");break;
+                case '0' : filiter(".todoList", "0");break;
                 default: filiter('.todoList', 'default')
             }
         })
@@ -91,7 +93,7 @@
                     },
                     async: true,
                     success: function () {
-                        that.text('Complete')
+                        that.html('<i class="material-icons">check_circle_outline </i>')
                         that.parent().attr('data-status', '1')
                     }
                 })
@@ -100,8 +102,8 @@
 
         $('body').on('click', '.edit', function () {
             var that= $(this);
-            var parent = that.parent();
-            var text = that.parent().find('.p').text();
+            var parent = that.parent().parent();
+            var text = parent.find('.p').text();
             var input = $('<input>',{
                 value : text,
                 style: 'width: 90%',
@@ -114,7 +116,7 @@
         });
         $('body').on('click', '.save', function () {
             var that= $(this);
-            var parent = that.parent();
+            var parent = that.parent().parent();
                 $.ajax({
                     url : '{{ path("update") }}',
                     type: 'get',
@@ -137,13 +139,42 @@
                     url: '{{ path("remove") }}',
                     type: 'get',
                     data:{
-                        id: $(this).parent().attr('data-id')
+                        id: $(this).parent().parent().attr('data-id')
                     },
                     async: true,
                     success: function () {
-                        that.parent().fadeOut(1000, function () {
-                            that.parent().delete()
-                          })
+                        that.parent().parent().fadeOut(1000, function () {
+                            that.parent().parent().remove()
+                            setTimeout(function(){ getCount () }, 500);
+                        })
+
+                    }
+                })
+            }
+        })
+
+
+        $('body').on('click', '.clear',function () {
+            var that= $(this);
+            if(confirm('Are you sure ?!')){
+                var ids = [];
+                    $('[data-status="1"]').each(function (i, n) {
+                    ids.push($(n).attr('data-id'))
+                });
+                $.ajax({
+                    url: '{{ path("clear") }}',
+                    type: 'get',
+                    data:{
+                        id: ids
+                    },
+                    async: true,
+                    success: function () {
+                        $('[data-status="1"]').each(function (i, n) {
+                           $(n).fadeOut('slow', function () {
+                               $(n).remove()
+                           })
+                            setTimeout(function(){ getCount () }, 500);
+                        });
 
                     }
                 })
